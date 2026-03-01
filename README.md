@@ -1,98 +1,33 @@
-# 🧠 ResumeRanker AI
+# 📄 AI Resume Ranking System
 
-ResumeRanker AI is an intelligent application that matches resumes with job descriptions using advanced semantic similarity techniques powered by Sentence Transformers. It's built to help recruiters, hiring managers, and job seekers streamline the resume screening process.
+An AI-powered application that ranks multiple resumes against a specific Job Description (JD) using Natural Language Processing (NLP). This tool is designed to streamline the screening process by providing objective similarity scores.
 
----
+## 🚀 Features
+* **Multi-PDF Support:** Upload and process multiple resumes simultaneously.
+* **Text Extraction:** Automated text parsing from PDF files.
+* **Similarity Scoring:** Uses **TF-IDF Vectorization** and **Cosine Similarity** to calculate match percentages.
+* **Interactive Dashboard:** A clean, user-friendly interface built with Streamlit.
 
-## 🚀 Demo
+## 🛠️ Technology Stack
+* **Language:** Python
+* **Frontend:** Streamlit
+* **Libraries:** Scikit-learn, PyPDF2
 
-https://huggingface.co/spaces/abhisheksingh100/Resume_Rankers_AI
-
----
-
-## ✨ Features
-
-- ✅ Upload multiple resumes (PDF or DOCX)
-- ✅ Upload a job description
-- ✅ Auto-detects the job description file
-- ✅ Calculates similarity score between job description and each resume
-- ✅ Returns a sorted ranking of resumes based on match quality
-
----
-
-## 📁 File Structure
-
-```
-ResumeRanker_AI/
-│
-├── Resume_Ranker_AI.py        # Main Python script with all logic
-├── app.py                     # (Optional) Gradio interface script if deployed
-├── requirements.txt           # Dependencies
-└── README.md                  # This file
-```
-
----
-
-## 🛠️ Technologies Used
-
-- Python
-- Sentence Transformers (all-MiniLM-L6-v2)
-- Scikit-learn
-- Pandas
-- Gradio (if used for interface)
-- PDFPlumber & python-docx for file reading
-
----
+## 📊 How it Works
+1. **Input:** User provides a Job Description and uploads resumes.
+2. **Vectorization:** The system converts text into numerical vectors using TF-IDF.
+3. **Calculation:** It computes the Cosine Similarity between the JD and each resume:
+   $$\text{Similarity} = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \|\mathbf{B}\|}$$
+4. **Ranking:** Results are sorted from highest to lowest match percentage.
 
 ## 📦 Installation
+1. Clone this repository:
+   ```bash
+   git clone [https://github.com/challalokesh08/Resume_Ranker_AI.git](https://github.com/challalokesh08/Resume_Ranker_AI.git)
 
-To run locally:
 
-```bash
-git clone https://github.com/your-username/ResumeRanker_AI.git
-cd ResumeRanker_AI
+**#Install Dependinces**
 pip install -r requirements.txt
-python Resume_Ranker_AI.py
-```
 
-To run with a Gradio interface:
-
-```bash
-python app.py
-```
-
----
-
-## 📋 Usage
-
-1. Place your resumes (PDF or DOCX) and job description file in the same folder.
-2. Run the script.
-3. It automatically detects the job description.
-4. Outputs ranked list of resumes with similarity scores.
-
----
-
-## 📸 Example Output
-
-```
-Top Matches:
-1. John_Doe.pdf - Similarity: 0.87
-2. Priya_Kumar.docx - Similarity: 0.82
-3. Rahul_Sharma.pdf - Similarity: 0.79
-```
-
----
-
-## 🙌 Acknowledgements
-
-- Hugging Face for Sentence Transformers
-- scikit-learn for cosine similarity
-- Gradio for simple UI
-
----
-
-## 📫 Contact
-
-Made by **Abhishek Singh**
-
-Let’s connect on [LinkedIn](https://www.linkedin.com)
+**##Run the Application**
+streamlit run streamlit_app.py
