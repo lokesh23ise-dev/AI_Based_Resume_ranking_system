@@ -31,3 +31,11 @@ pip install -r requirements.txt
 
 **##Run the Application**
 streamlit run streamlit_app.py
+
+
+
+
+
+
+DEMO
+https://aibasedresumerankingsystem-weds4xxcfmh3yfypjft35n.streamlit.app/
