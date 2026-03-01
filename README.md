@@ -23,7 +23,7 @@ An AI-powered application that ranks multiple resumes against a specific Job Des
 ## 📦 Installation
 1. Clone this repository:
    ```bash
-   git clone [https://github.com/challalokesh08/Resume_Ranker_AI.git](https://github.com/challalokesh08/Resume_Ranker_AI.git)
+   git clone [https://github.com/lokesh23ise-dev/AI_Based_Resume_ranking_system](https://github.com/lokesh23ise-dev/AI_Based_Resume_ranking_system)
 
 
 **#Install Dependinces**
