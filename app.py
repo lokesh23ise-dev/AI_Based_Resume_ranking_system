@@ -83,6 +83,31 @@ if st.button("🚀 Rank Resumes"):
             resume_keywords = get_cleaned_keywords(raw_text)
             matches = jd_keywords.intersection(resume_keywords)
             missing = jd_keywords - resume_keywords
+
+                        # Resume Strength
+            strengths = []
+            if len(matches) > 30:
+                strengths.append("Strong keyword match with job description")
+            if "python" in raw_text.lower():
+                strengths.append("Python programming skill present")
+            if "git" in raw_text.lower():
+                strengths.append("Version control knowledge (Git)")
+            if "database" in raw_text.lower() or "mysql" in raw_text.lower():
+                strengths.append("Database knowledge")
+
+            # Resume Weakness
+            weaknesses = []
+            if len(missing) > 30:
+                weaknesses.append("Many required job keywords missing")
+            if "react" not in raw_text.lower():
+                weaknesses.append("No React or frontend framework mentioned")
+            if "api" not in raw_text.lower():
+                weaknesses.append("API development experience not mentioned")
+            if "project" not in raw_text.lower():
+                weaknesses.append("Projects section missing")
+
+        
+    
             
             # Display Result Card
             with st.expander(f"**{name}** — Match Score: {round(score * 100, 2)}%"):
@@ -98,6 +123,28 @@ if st.button("🚀 Rank Resumes"):
                     st.error(f"❌ **Missing from Resume ({len(missing)})**")
                     # Display first 15 missing keywords
                     st.write(", ".join(list(missing)[:15]) if missing else "No missing keywords found!")
+                                # Resume Strength
+            strengths = []
+            if len(matches) > 30:
+                strengths.append("Strong keyword match with job description")
+            if "python" in raw_text.lower():
+                strengths.append("Python programming skill present")
+            if "git" in raw_text.lower():
+                strengths.append("Version control knowledge (Git)")
+            if "database" in raw_text.lower() or "mysql" in raw_text.lower():
+                strengths.append("Database knowledge")
+
+            # Resume Weakness
+            weaknesses = []
+            if len(missing) > 30:
+                weaknesses.append("Many required job keywords missing")
+            if "react" not in raw_text.lower():
+                weaknesses.append("No React or frontend framework mentioned")
+            if "api" not in raw_text.lower():
+                weaknesses.append("API development experience not mentioned")
+            if "project" not in raw_text.lower():
+                weaknesses.append("Projects section missing")
+
                     
     else:
         st.warning("Please provide both a job description and at least one resume.")
