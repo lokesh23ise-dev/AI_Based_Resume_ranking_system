@@ -5,7 +5,7 @@ import PyPDF2
 import re
 import nltk
 from nltk.corpus import stopwords
-import matplotlib.pyplot as plt
+import pandas as pd
 
 # Initialize NLTK Stopwords
 try:
@@ -142,11 +142,8 @@ if st.button("🚀 Rank Resumes"):
                     st.write("No major weaknesses detected.")
 
                 # Visualization: Keyword Match
-                fig, ax = plt.subplots()
-                ax.bar(["Matched", "Missing"], [len(matches), len(missing)], color=['green', 'red'])
-                ax.set_ylabel("Keyword Count")
-                ax.set_title("Keyword Match vs Missing")
-                st.pyplot(fig)
+                df = pd.DataFrame({'Count': [len(matches), len(missing)]}, index=['Matched', 'Missing'])
+                st.bar_chart(df)
 
     else:
         st.warning("Please provide both a job description and at least one resume.")
