@@ -5,7 +5,6 @@ import PyPDF2
 import re
 import nltk
 from nltk.corpus import stopwords
-import pandas as pd
 
 # Initialize NLTK Stopwords
 try:
@@ -87,33 +86,8 @@ if st.button("🚀 Rank Resumes"):
             matches = jd_keywords.intersection(resume_keywords)
             missing = jd_keywords - resume_keywords
 
-            # Strengths
-            strengths = []
-            if len(matches) > 30:
-                strengths.append("Strong keyword match with job description")
-            if "python" in raw_text.lower():
-                strengths.append("Python programming skill present")
-            if "git" in raw_text.lower():
-                strengths.append("Version control knowledge (Git)")
-            if "database" in raw_text.lower() or "mysql" in raw_text.lower():
-                strengths.append("Database knowledge")
-
-            # Weaknesses
-            weaknesses = []
-            if len(missing) > 30:
-                weaknesses.append("Many required job keywords missing")
-            if "react" not in raw_text.lower():
-                weaknesses.append("No React or frontend framework mentioned")
-            if "api" not in raw_text.lower():
-                weaknesses.append("API development experience not mentioned")
-            if "project" not in raw_text.lower():
-                weaknesses.append("Projects section missing")
-
-            # ATS Score (new feature)
-            ats_score = round((len(matches) / len(jd_keywords)) * 100, 2) if jd_keywords else 0
-
-            # Display Results
-            with st.expander(f"**{name}** — Match Score: {round(score * 100, 2)}% — ATS Score: {ats_score}%"):
+            # Display Result
+            with st.expander(f"**{name}** — Match Score: {round(score * 100, 2)}%"):
 
                 st.progress(float(score))
 
@@ -126,24 +100,6 @@ if st.button("🚀 Rank Resumes"):
                 with c2:
                     st.error(f"❌ **Missing Keywords ({len(missing)})**")
                     st.write(", ".join(list(missing)[:15]) if missing else "No missing keywords!")
-
-                st.markdown("### 💪 Resume Strengths")
-                if strengths:
-                    for s in strengths:
-                        st.write("- ", s)
-                else:
-                    st.write("No major strengths detected.")
-
-                st.markdown("### ⚠ Resume Weaknesses")
-                if weaknesses:
-                    for w in weaknesses:
-                        st.write("- ", w)
-                else:
-                    st.write("No major weaknesses detected.")
-
-                # Visualization: Keyword Match
-                df = pd.DataFrame({'Count': [len(matches), len(missing)]}, index=['Matched', 'Missing'])
-                st.bar_chart(df)
 
     else:
         st.warning("Please provide both a job description and at least one resume.")
