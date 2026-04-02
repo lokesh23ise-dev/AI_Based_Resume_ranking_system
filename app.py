@@ -5,15 +5,16 @@ import PyPDF2
 import re
 import nltk
 from nltk.corpus import stopwords
+import matplotlib.pyplot as plt
 
-# Initializing NLTK Stopwords
+# Initialize NLTK Stopwords
 try:
     STOPWORDS = set(stopwords.words('english'))
 except LookupError:
     nltk.download('stopwords')
     STOPWORDS = set(stopwords.words('english'))
 
-
+# PDF Text Extraction
 def extract_text_from_pdf(file):
     pdf_reader = PyPDF2.PdfReader(file)
     text = ""
@@ -23,28 +24,21 @@ def extract_text_from_pdf(file):
             text += extracted
     return text
 
-
+# Clean text for keyword extraction
 def get_cleaned_keywords(text):
-    """
-    Cleans text by removing punctuation and stopwords to extract raw keywords.
-    """
     text = re.sub(r'[^a-zA-Z\s]', '', text.lower())
     words = set(text.split())
     keywords = words - STOPWORDS
     return keywords
 
-
-# Page Configuration
+# Page Config
 st.set_page_config(page_title="AI Resume Ranker", page_icon="📄", layout="wide")
-
 st.title("🎯 AI Resume Ranking & Gap Analysis")
 
 st.markdown("""
 Upload resumes and paste a job description to see how well they match.
-
 This system uses **TF-IDF Vectorization** for scoring and **Natural Language Processing** for gap analysis.
 """)
-
 
 # Layout
 col_a, col_b = st.columns([1, 1])
@@ -58,7 +52,6 @@ with col_b:
         type="pdf",
         accept_multiple_files=True
     )
-
 
 if st.button("🚀 Rank Resumes"):
 
@@ -75,23 +68,14 @@ if st.button("🚀 Rank Resumes"):
         # TF-IDF Similarity
         all_content = [jd_text] + resumes_text
         vectorizer = TfidfVectorizer(stop_words='english')
-
         tfidf_matrix = vectorizer.fit_transform(all_content)
-
-        similarities = cosine_similarity(
-            tfidf_matrix[0:1],
-            tfidf_matrix[1:]
-        ).flatten()
+        similarities = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:]).flatten()
 
         # JD Keywords
         jd_keywords = get_cleaned_keywords(jd_text)
 
         # Sort Results
-        results = sorted(
-            zip(file_names, similarities, resumes_text),
-            key=lambda x: x[1],
-            reverse=True
-        )
+        results = sorted(zip(file_names, similarities, resumes_text), key=lambda x: x[1], reverse=True)
 
         st.divider()
         st.subheader("📊 Ranking Results")
@@ -100,43 +84,36 @@ if st.button("🚀 Rank Resumes"):
         for name, score, raw_text in results:
 
             resume_keywords = get_cleaned_keywords(raw_text)
-
             matches = jd_keywords.intersection(resume_keywords)
-
             missing = jd_keywords - resume_keywords
 
-            # Resume Strength
+            # Strengths
             strengths = []
-
             if len(matches) > 30:
                 strengths.append("Strong keyword match with job description")
-
             if "python" in raw_text.lower():
                 strengths.append("Python programming skill present")
-
             if "git" in raw_text.lower():
                 strengths.append("Version control knowledge (Git)")
-
             if "database" in raw_text.lower() or "mysql" in raw_text.lower():
                 strengths.append("Database knowledge")
 
-            # Resume Weakness
+            # Weaknesses
             weaknesses = []
-
             if len(missing) > 30:
                 weaknesses.append("Many required job keywords missing")
-
             if "react" not in raw_text.lower():
                 weaknesses.append("No React or frontend framework mentioned")
-
             if "api" not in raw_text.lower():
                 weaknesses.append("API development experience not mentioned")
-
             if "project" not in raw_text.lower():
                 weaknesses.append("Projects section missing")
 
-            # Display Result
-            with st.expander(f"**{name}** — Match Score: {round(score * 100, 2)}%"):
+            # ATS Score (new feature)
+            ats_score = round((len(matches) / len(jd_keywords)) * 100, 2) if jd_keywords else 0
+
+            # Display Results
+            with st.expander(f"**{name}** — Match Score: {round(score * 100, 2)}% — ATS Score: {ats_score}%"):
 
                 st.progress(float(score))
 
@@ -144,22 +121,13 @@ if st.button("🚀 Rank Resumes"):
 
                 with c1:
                     st.success(f"✅ **Matching Keywords ({len(matches)})**")
-
-                    st.write(
-                        ", ".join(list(matches)[:15])
-                        if matches else "No significant matches."
-                    )
+                    st.write(", ".join(list(matches)[:15]) if matches else "No significant matches.")
 
                 with c2:
-                    st.error(f"❌ **Missing from Resume ({len(missing)})**")
-
-                    st.write(
-                        ", ".join(list(missing)[:15])
-                        if missing else "No missing keywords found!"
-                    )
+                    st.error(f"❌ **Missing Keywords ({len(missing)})**")
+                    st.write(", ".join(list(missing)[:15]) if missing else "No missing keywords!")
 
                 st.markdown("### 💪 Resume Strengths")
-
                 if strengths:
                     for s in strengths:
                         st.write("- ", s)
@@ -167,21 +135,22 @@ if st.button("🚀 Rank Resumes"):
                     st.write("No major strengths detected.")
 
                 st.markdown("### ⚠ Resume Weaknesses")
-
                 if weaknesses:
                     for w in weaknesses:
                         st.write("- ", w)
                 else:
                     st.write("No major weaknesses detected.")
 
+                # Visualization: Keyword Match
+                fig, ax = plt.subplots()
+                ax.bar(["Matched", "Missing"], [len(matches), len(missing)], color=['green', 'red'])
+                ax.set_ylabel("Keyword Count")
+                ax.set_title("Keyword Match vs Missing")
+                st.pyplot(fig)
+
     else:
-        st.warning(
-            "Please provide both a job description and at least one resume."
-        )
+        st.warning("Please provide both a job description and at least one resume.")
 
-
+# Sidebar Tips
 st.sidebar.markdown("---")
-
-st.sidebar.info(
-    "Tip: The 'Missing Keywords' section helps you identify what skills or certifications should be added to a resume to better align with the job."
-)
+st.sidebar.info("Tip: The 'Missing Keywords' section helps you identify what skills or certifications should be added to a resume to better align with the job.")
